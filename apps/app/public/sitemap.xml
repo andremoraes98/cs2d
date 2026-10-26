@@ -7,7 +7,13 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://cs2d.app/cologne-major-2026</loc>
+    <loc>https://cs2d.app/app</loc>
+    <lastmod>2026-10-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://cs2d.app/tournaments/2026/major-cologne</loc>
     <lastmod>2026-06-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

@@ -15,6 +15,8 @@ import { KIND_ORDER, grenadeIconStyle as iconStyle } from '@/viewer/domain/grena
 import ViewerMap from '@/viewer/player/ViewerMap.vue'
 import ReplayClipPopover from '@/viewer/player/ReplayClipPopover.vue'
 import UiSelect from '@/ui/UiSelect.vue'
+import UiIcon from '@/ui/UiIcon.vue'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/ui/tooltip'
 import { useI18n } from '@/app/i18n'
 
 // `t` is the template loop variable; i18n is aliased as `tr`.
@@ -226,6 +228,35 @@ const CLIP_TAIL = 6
 // Clicking a throw opens a looping mini-clip of it; "watch in match" inside still
 // seeks the 2D replay. The popover pins to the throw's impact spot on the map.
 const selectedThrow = ref<Throw | null>(null)
+
+/**
+ * Console command to repeat the selected throw on a practice server: where it was
+ * thrown from, as `getpos` prints it (`setpos` + `setang`).
+ */
+const setposCmd = computed(() => {
+  const th = selectedThrow.value?.path.throw
+  return th
+    ? `setpos ${th.x.toFixed(2)} ${th.y.toFixed(2)} ${th.z.toFixed(2)};setang ${th.pitch.toFixed(2)} ${th.yaw.toFixed(2)} 0`
+    : null
+})
+/** True for a moment after copying (the button shows a check). */
+const copied = ref(false)
+let copiedTimer: ReturnType<typeof setTimeout> | undefined
+async function copySetpos() {
+  const cmd = setposCmd.value
+  if (!cmd) return
+  try {
+    await navigator.clipboard.writeText(cmd)
+  } catch {
+    window.prompt(tr('grenades.copyFallback'), cmd)
+    return
+  }
+  copied.value = true
+  clearTimeout(copiedTimer)
+  copiedTimer = setTimeout(() => (copied.value = false), 1500)
+}
+watch(selectedThrow, () => (copied.value = false))
+
 const mapRef = ref<InstanceType<typeof ViewerMap> | null>(null)
 function onPick(t: Throw) {
   selectedThrow.value = t
@@ -461,6 +492,21 @@ function onLeave() {
           {{ selectedThrow.throwerName || tr('grenades.unknown') }}
         </span>
         <span class="shrink-0 text-ink-400">{{ kindLabel(selectedThrow.kind) }}</span>
+      </template>
+      <template v-if="setposCmd" #actions>
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <button
+              type="button"
+              :aria-label="tr('grenades.copyThrow')"
+              class="flex h-[34px] w-[34px] shrink-0 cursor-pointer items-center justify-center rounded-md border border-ink-700 bg-ink-800/60 text-ink-100 transition-colors hover:border-surge-500/60 hover:bg-ink-800"
+              @click="copySetpos"
+            >
+              <UiIcon :name="copied ? 'check' : 'copy'" class="h-3.5 w-3.5" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="top">{{ copied ? tr('grenades.copied') : tr('grenades.copyThrow') }}</TooltipContent>
+        </Tooltip>
       </template>
     </ReplayClipPopover>
   </div>

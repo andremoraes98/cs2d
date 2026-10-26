@@ -171,6 +171,10 @@
     "showElapsed": "Show elapsed time",
     "autoZoom": "Auto zoom",
     "autoZoomDesc": "Frames all players on the map",
+    "view2dTip": "2D radar view (V)",
+    "view3dTip": "3D view (V), experimental",
+    "only2d": "Comments and coach mode are only available in 2D",
+    "cutHeight": "Roof cut",
     "lowQualityEffects": "Performance mode",
     "lowQualityEffectsDesc": "Draws smokes and molotovs as plain circles, for weaker devices",
     "autoAdvance": "Auto advance",
@@ -268,7 +272,10 @@
     "allPlayers": "All players",
     "empty": "No grenades for the current filters.",
     "unknown": "Unknown",
-    "hint": "Hover a grenade to isolate its trajectory · click to open it in the replay"
+    "hint": "Hover a grenade to isolate its trajectory · click to open it in the replay",
+    "copyThrow": "Copy setpos",
+    "copied": "Copied",
+    "copyFallback": "Copy this command:"
   },
   "utilities": {
     "tabs": {
@@ -479,5 +486,36 @@
     "watch": "Watch",
     "pickMap": "Pick a map",
     "soon": "Soon"
+  },
+  "landing": {
+    "cta": "Open the app",
+    "secondary": "View source on GitHub",
+    "badge": "Free · open source · 100% in your browser",
+    "title": "Review your CS2 demos in 2D",
+    "subtitle": "Drop a demo and follow the match round by round: positions, grenades, shots, economy and comms. Nothing to install, and nothing is sent to any server.",
+    "showcaseAlt": "2D replay of a CS2 match on the Dust2 radar",
+    "howTitle": "How it works",
+    "step1Title": "1. Add your demo",
+    "step1Body": "Drag the .dem file (or .gz, .zip, .zst) from your match into the app.",
+    "step2Title": "2. We process it right here",
+    "step2Body": "A Rust/WebAssembly parser reads the demo in your browser. Nothing leaves your machine.",
+    "step3Title": "3. Review and analyze",
+    "step3Body": "Watch the 2D replay and explore heatmaps, utility, economy and duels.",
+    "featuresTitle": "What you get",
+    "replayTitle": "2D replay",
+    "replayBody": "Follow players, shots, grenades and the bomb on the radar, with speed control and a per-round timeline.",
+    "heatmapsTitle": "Heatmaps",
+    "heatmapsBody": "See where each team positions itself and where grenades land, by map, side and round.",
+    "duelsTitle": "Duels",
+    "duelsBody": "Understand who wins each fight, with filterable kills, deaths and trades.",
+    "utilitiesTitle": "Utility",
+    "utilitiesBody": "Review every grenade thrown and copy the setpos to practice the same lineup.",
+    "economyTitle": "Economy",
+    "economyBody": "See what each player bought every round and how the team's money evolved.",
+    "offlineTitle": "Works offline",
+    "offlineBody": "Install it as an app and use it without internet. Your demo history stays on your device only.",
+    "privacyTitle": "Your demo never leaves your computer",
+    "privacyBody": "All processing happens in the browser. There is no upload, no account and no tracking of your matches.",
+    "finalCta": "Open the app"
   }
 }

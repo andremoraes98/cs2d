@@ -1,5 +1,5 @@
 // Keyboard shortcuts for the replay stage: space toggles play/pause, arrows seek
-// +/-5s, Ctrl/Cmd+Z / +Y drive the coach board's undo/redo, Tab holds the
+// +/-5s, V switches 2D/3D, Ctrl/Cmd+Z / +Y drive the coach board's undo/redo, Tab holds the
 // scoreboard open, and Escape drops the followed player. Split out of ViewerStage
 // so the component isn't cluttered with input plumbing; it owns `scoreboardOpen`.
 import { ref, type Ref } from 'vue'
@@ -26,6 +26,8 @@ interface ViewerShortcutsOptions {
   /** Coach board undo/redo. */
   undo: () => void
   redo: () => void
+  /** Switch between the 2D and 3D views. */
+  toggleView?: () => void
 }
 
 export function useViewerShortcuts(opts: ViewerShortcutsOptions) {
@@ -65,6 +67,13 @@ export function useViewerShortcuts(opts: ViewerShortcutsOptions) {
     if (!opts.coachMode.value || shortcutsBlocked(e) || !(e.ctrlKey || e.metaKey)) return
     e.preventDefault()
     opts.redo()
+  })
+
+  // V switches between the 2D radar and the 3D view.
+  onKeyStroke(['v', 'V'], (e) => {
+    if (shortcutsBlocked(e) || e.ctrlKey || e.metaKey || e.altKey) return
+    e.preventDefault()
+    opts.toggleView?.()
   })
 
   // Scoreboard (TAB style): shown while the key is held.

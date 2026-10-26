@@ -171,6 +171,10 @@
     "showElapsed": "Vergangene Zeit anzeigen",
     "autoZoom": "Auto-Zoom",
     "autoZoomDesc": "Fasst alle Spieler auf der Map ein",
+    "view2dTip": "2D-Radaransicht (V)",
+    "view3dTip": "3D-Ansicht (V), experimentell",
+    "only2d": "Kommentare und Coach-Modus gibt es nur in 2D",
+    "cutHeight": "Dachschnitt",
     "lowQualityEffects": "Leistungsmodus",
     "lowQualityEffectsDesc": "Zeichnet Rauch und Molotows als einfache Kreise, für schwächere Geräte",
     "autoAdvance": "Automatisch weiter",
@@ -268,7 +272,10 @@
     "allPlayers": "Alle Spieler",
     "empty": "Keine Granaten für die aktuellen Filter.",
     "unknown": "Unbekannt",
-    "hint": "Fahre mit der Maus über eine Granate, um ihre Flugbahn zu isolieren · klicke, um sie im Replay zu öffnen"
+    "hint": "Fahre mit der Maus über eine Granate, um ihre Flugbahn zu isolieren · klicke, um sie im Replay zu öffnen",
+    "copyThrow": "setpos kopieren",
+    "copied": "Kopiert",
+    "copyFallback": "Diesen Befehl kopieren:"
   },
   "utilities": {
     "tabs": {
@@ -479,5 +486,36 @@
     "watch": "Ansehen",
     "pickMap": "Map auswählen",
     "soon": "Bald"
+  },
+  "landing": {
+    "cta": "App öffnen",
+    "secondary": "Quellcode auf GitHub ansehen",
+    "badge": "Kostenlos · Open Source · 100 % im Browser",
+    "title": "Sieh dir deine CS2-Demos in 2D an",
+    "subtitle": "Ziehe eine Demo hinein und verfolge das Match Runde für Runde: Positionen, Granaten, Schüsse, Economy und Kommunikation. Nichts zu installieren, und nichts wird an einen Server gesendet.",
+    "showcaseAlt": "2D-Replay eines CS2-Matches auf dem Dust2-Radar",
+    "howTitle": "So funktioniert's",
+    "step1Title": "1. Demo hinzufügen",
+    "step1Body": "Ziehe die .dem-Datei (oder .gz, .zip, .zst) deines Matches in die App.",
+    "step2Title": "2. Verarbeitung direkt hier",
+    "step2Body": "Ein Rust/WebAssembly-Parser liest die Demo in deinem Browser. Nichts verlässt deinen Rechner.",
+    "step3Title": "3. Ansehen und analysieren",
+    "step3Body": "Schau dir das 2D-Replay an und erkunde Heatmaps, Utility, Economy und Duelle.",
+    "featuresTitle": "Das bekommst du",
+    "replayTitle": "2D-Replay",
+    "replayBody": "Verfolge Spieler, Schüsse, Granaten und Bombe auf dem Radar, mit Geschwindigkeitssteuerung und Zeitleiste pro Runde.",
+    "heatmapsTitle": "Heatmaps",
+    "heatmapsBody": "Sieh, wo sich jedes Team positioniert und wo Granaten landen – nach Map, Seite und Runde.",
+    "duelsTitle": "Duelle",
+    "duelsBody": "Verstehe, wer welchen Kampf gewinnt, mit filterbaren Kills, Tode und Trades.",
+    "utilitiesTitle": "Utility",
+    "utilitiesBody": "Sieh dir jede geworfene Granate an und kopiere das setpos, um denselben Wurf zu üben.",
+    "economyTitle": "Economy",
+    "economyBody": "Sieh, was jeder Spieler in jeder Runde gekauft hat und wie sich das Teamgeld entwickelt hat.",
+    "offlineTitle": "Funktioniert offline",
+    "offlineBody": "Installiere sie als App und nutze sie ohne Internet. Dein Demo-Verlauf bleibt nur auf deinem Gerät.",
+    "privacyTitle": "Deine Demo verlässt deinen Computer nicht",
+    "privacyBody": "Die gesamte Verarbeitung läuft im Browser. Kein Upload, kein Konto, kein Tracking deiner Matches.",
+    "finalCta": "App öffnen"
   }
 }

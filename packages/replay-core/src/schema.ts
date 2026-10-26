@@ -195,6 +195,24 @@ export interface GrenadePath {
   /** Who threw it (steamId64), when resolved. Powers the grenades finder
    *  (filter by player/side); null when the parser could not resolve it. */
   throwerSteamId: string | null
+  /** Where it was thrown from, as in-game `getpos` prints it (eye position and
+   *  view angles), so `setpos x y z;setang pitch yaw 0` repeats the throw. Absent
+   *  in older replays or when the release could not be matched. */
+  throw?: GrenadeThrow
+}
+
+/** A grenade release: eye position (feet + 64, or + 46 crouched; a jumpthrow
+ *  from its takeoff point) and view angles in degrees, pitch up negative. */
+export interface GrenadeThrow {
+  x: number
+  y: number
+  z: number
+  pitch: number
+  yaw: number
+  /** Released mid-air (a jumpthrow). */
+  jump: boolean
+  /** Crouched when released. */
+  crouch: boolean
 }
 
 /**

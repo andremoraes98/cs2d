@@ -198,6 +198,9 @@ if (props.dismissOnOutside) onClickOutside(card, () => !exporting.value && emit(
             {{ t('heatmap.watchInMatch') }}
           </button>
 
+          <!-- Extra icon actions from the parent (e.g. copy a throw's setpos). -->
+          <slot name="actions" />
+
           <!-- Records one real-time pass off the map canvas (so the button shows a
                spinner meanwhile), then reveals the preview above. -->
           <Tooltip v-if="canExport">

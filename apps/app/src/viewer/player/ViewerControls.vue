@@ -48,6 +48,8 @@ const props = defineProps<{
   commentedRounds?: Set<number>
   /** Whether comment mode (drop/edit pins on the map) is active. */
   commentMode?: boolean
+  /** Comments only exist in the 2D view: the button is dimmed and inert in 3D. */
+  commentDisabled?: boolean
   /** Whether the player is in fullscreen (drives the toggle icon/tooltip). */
   fullscreen?: boolean
 }>()
@@ -495,10 +497,17 @@ onMounted(() => centerCurrent('auto'))
 
       <!-- Comment mode: drop and edit comments on the map -->
       <button
-        v-tooltip="t('viewer.comment.mode')"
-        class="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors duration-150"
-        :class="commentMode ? 'bg-surge-500 text-white' : 'text-ink-200 hover:bg-white/10 hover:text-white'"
-        @click="emit('toggleCommentMode')"
+        v-tooltip="commentDisabled ? t('viewer.only2d') : t('viewer.comment.mode')"
+        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors duration-150"
+        :class="
+          commentDisabled
+            ? 'cursor-not-allowed text-ink-500 opacity-50'
+            : commentMode
+              ? 'cursor-pointer bg-surge-500 text-white'
+              : 'cursor-pointer text-ink-200 hover:bg-white/10 hover:text-white'
+        "
+        :aria-disabled="commentDisabled"
+        @click="!commentDisabled && emit('toggleCommentMode')"
       >
         <UiIcon name="message" class="h-4 w-4" />
       </button>

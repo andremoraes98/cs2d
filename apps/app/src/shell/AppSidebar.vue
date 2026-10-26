@@ -7,6 +7,7 @@ import UiIcon from '@/ui/UiIcon.vue'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/ui/tooltip'
 import { useSidebar } from '@/shell/useSidebar'
 import { useI18n } from '@/app/i18n'
+import { LANDING_PATH, UPLOAD_PATH } from '@/app/paths'
 
 // Compact, collapsible primary nav (VS Code activity-bar style). The collapse
 // state is shared (useSidebar) so the top-bar button drives it; when collapsed
@@ -22,7 +23,7 @@ const iconOnly = computed(() => isDesktop.value && collapsed.value)
 // Top: the core tool navigation. The analyzer route ('demoviewer') backs both the
 // upload home and the open viewer; the tournaments showcase sits alongside them.
 const NAV_TOP = [
-  { name: 'demoviewer', to: '/', icon: 'upload', label: 'shell.upload' },
+  { name: 'demoviewer', to: UPLOAD_PATH, icon: 'upload', label: 'shell.upload' },
   { name: 'library', to: '/library', icon: 'library', label: 'shell.library' },
   { name: 'tournaments', to: '/tournaments', icon: 'trophy', label: 'shell.tournaments' },
 ] as const
@@ -37,7 +38,7 @@ const MINOR_LINKS = [
 // The tournaments nav item stays active on the detail route ('tournament') too,
 // so drilling into a bracket keeps the sidebar entry highlighted.
 function isActive(name: string) {
-  return route.name === name || (name === 'tournaments' && route.name === 'tournament')
+  return route.name === name || (name === 'demoviewer' && route.name === 'demo') || (name === 'tournaments' && route.name === 'tournament')
 }
 
 function itemClass(name: string) {
@@ -57,7 +58,7 @@ function itemClass(name: string) {
   >
     <!-- Brand: icon always visible, title hidden when collapsed -->
     <RouterLink
-      to="/"
+      :to="LANDING_PATH"
       :aria-label="t('shell.home')"
       class="flex h-10 items-center gap-2 rounded-md px-1 text-ink-200 transition-colors hover:bg-ink-800"
       :class="iconOnly ? 'justify-center' : ''"

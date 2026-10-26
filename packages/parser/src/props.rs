@@ -62,6 +62,20 @@ pub(crate) fn world_coord(e: &Entity, cell: &str, vec: &str) -> f64 {
     c * 512.0 - 16384.0 + v
 }
 
+/// Eye angles (degrees) as the game's `setang` takes them: (pitch, yaw), pitch up
+/// negative. Both come 180 degrees off in m_angEyeAngles (see `pawn_yaw`); checked
+/// against another parser (awpy) on the same throws: same values once corrected.
+pub(crate) fn pawn_eye_angles(e: &Entity) -> (f64, f64) {
+    let wrap = |v: f64| {
+        let v = (v - 180.0).rem_euclid(360.0);
+        if v > 180.0 { v - 360.0 } else { v }
+    };
+    match e.get_property_by_name("m_angEyeAngles") {
+        Ok(FieldValue::Vector3D(a)) => (wrap(a[0] as f64), wrap(a[1] as f64)),
+        _ => (0.0, 0.0),
+    }
+}
+
 /// Aim yaw (degrees): m_angEyeAngles is a Vector3D [pitch, yaw, roll]. The value
 /// comes 180 degrees off from the convention the viewer expects (validated against
 /// movement direction and the offline parser format), so we correct it here.

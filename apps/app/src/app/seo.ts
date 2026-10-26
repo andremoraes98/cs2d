@@ -13,7 +13,9 @@ const BRAND = 'CS2d.app'
 // description. Keys resolve through i18n so the head follows the active locale,
 // reusing the page strings we already translate.
 const ROUTE_SEO: Record<string, { titleKey?: string; descKey: string }> = {
+  landing: { descKey: 'seo.appDescription' },
   demoviewer: { descKey: 'seo.appDescription' },
+  demo: { descKey: 'seo.appDescription' },
   library: { titleKey: 'shell.library', descKey: 'seo.appDescription' },
   tournaments: { titleKey: 'shell.tournaments', descKey: 'tournaments.listIntro' },
   tournament: { titleKey: 'shell.tournaments', descKey: 'tournaments.intro' },
@@ -56,7 +58,7 @@ export function useSeoHead() {
     () => {
       const seo = ROUTE_SEO[String(route.name)] ?? ROUTE_SEO.demoviewer
       const title =
-        route.path === '/'
+        route.name === 'landing'
           ? `${BRAND} · ${t('seo.homeTitle')}`
           : seo.titleKey
             ? `${t(seo.titleKey)} · ${BRAND}`

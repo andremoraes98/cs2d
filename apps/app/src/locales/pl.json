@@ -171,6 +171,10 @@
     "showElapsed": "Pokaż upływający czas",
     "autoZoom": "Automatyczny zoom",
     "autoZoomDesc": "Obejmuje wszystkich graczy na mapie",
+    "view2dTip": "Widok radaru 2D (V)",
+    "view3dTip": "Widok 3D (V), eksperymentalny",
+    "only2d": "Komentarze i tryb trenera są dostępne tylko w 2D",
+    "cutHeight": "Przekrój dachu",
     "lowQualityEffects": "Tryb wydajności",
     "lowQualityEffectsDesc": "Rysuje dymy i koktajle jako proste koła, dla słabszych urządzeń",
     "autoAdvance": "Automatyczne przejście",
@@ -268,7 +272,10 @@
     "allPlayers": "Wszyscy gracze",
     "empty": "Brak granatów dla bieżących filtrów.",
     "unknown": "Nieznany",
-    "hint": "Najedź na granat, aby wyizolować jego tor · kliknij, aby otworzyć go w powtórce"
+    "hint": "Najedź na granat, aby wyizolować jego tor · kliknij, aby otworzyć go w powtórce",
+    "copyThrow": "Kopiuj setpos",
+    "copied": "Skopiowano",
+    "copyFallback": "Skopiuj to polecenie:"
   },
   "utilities": {
     "tabs": {
@@ -479,5 +486,36 @@
     "watch": "Oglądaj",
     "pickMap": "Wybierz mapę",
     "soon": "Wkrótce"
+  },
+  "landing": {
+    "cta": "Otwórz aplikację",
+    "secondary": "Zobacz kod na GitHubie",
+    "badge": "Za darmo · open source · 100% w Twojej przeglądarce",
+    "title": "Oglądaj swoje dema CS2 w 2D",
+    "subtitle": "Przeciągnij demo i śledź mecz runda po rundzie: pozycje, granaty, strzały, ekonomię i komunikację. Nic nie trzeba instalować i nic nie jest wysyłane na żaden serwer.",
+    "showcaseAlt": "Replay 2D meczu CS2 na radarze Dust2",
+    "howTitle": "Jak to działa",
+    "step1Title": "1. Dodaj demo",
+    "step1Body": "Przeciągnij plik .dem (lub .gz, .zip, .zst) ze swojego meczu do aplikacji.",
+    "step2Title": "2. Przetwarzamy je na miejscu",
+    "step2Body": "Parser w Rust/WebAssembly czyta demo w Twojej przeglądarce. Nic nie opuszcza Twojego komputera.",
+    "step3Title": "3. Oglądaj i analizuj",
+    "step3Body": "Obejrzyj replay 2D i przeglądaj heatmapy, utility, ekonomię i pojedynki.",
+    "featuresTitle": "Co dostajesz",
+    "replayTitle": "Replay 2D",
+    "replayBody": "Śledź graczy, strzały, granaty i bombę na radarze, z kontrolą prędkości i osią czasu dla każdej rundy.",
+    "heatmapsTitle": "Heatmapy",
+    "heatmapsBody": "Zobacz, gdzie ustawia się każda drużyna i gdzie lądują granaty — według mapy, strony i rundy.",
+    "duelsTitle": "Pojedynki",
+    "duelsBody": "Sprawdź, kto wygrywa każde starcie, z filtrowalnymi killami, śmierciami i tradami.",
+    "utilitiesTitle": "Utility",
+    "utilitiesBody": "Przejrzyj każdy rzucony granat i skopiuj setpos, aby przećwiczyć ten sam rzut.",
+    "economyTitle": "Ekonomia",
+    "economyBody": "Zobacz, co każdy gracz kupił w każdej rundzie i jak zmieniały się pieniądze drużyny.",
+    "offlineTitle": "Działa offline",
+    "offlineBody": "Zainstaluj jako aplikację i korzystaj bez internetu. Historia dem zostaje tylko na Twoim urządzeniu.",
+    "privacyTitle": "Twoje demo nie opuszcza Twojego komputera",
+    "privacyBody": "Całe przetwarzanie odbywa się w przeglądarce. Bez wysyłania, konta i śledzenia Twoich meczów.",
+    "finalCta": "Otwórz aplikację"
   }
 }

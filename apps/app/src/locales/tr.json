@@ -171,6 +171,10 @@
     "showElapsed": "Geçen süreyi göster",
     "autoZoom": "Otomatik yakınlaştırma",
     "autoZoomDesc": "Haritadaki tüm oyuncuları çerçeveler",
+    "view2dTip": "2D radar görünümü (V)",
+    "view3dTip": "3D görünüm (V), deneysel",
+    "only2d": "Yorumlar ve koç modu yalnızca 2D'de kullanılabilir",
+    "cutHeight": "Çatı kesimi",
     "lowQualityEffects": "Performans modu",
     "lowQualityEffectsDesc": "Sis ve molotofları basit daireler olarak çizer, daha zayıf cihazlar için",
     "autoAdvance": "Otomatik ilerleme",
@@ -268,7 +272,10 @@
     "allPlayers": "Tüm oyuncular",
     "empty": "Geçerli filtreler için granat yok.",
     "unknown": "Bilinmiyor",
-    "hint": "Bir granadın üzerine gelin, yörüngesini yalıtın · replay'de açmak için tıklayın"
+    "hint": "Bir granadın üzerine gelin, yörüngesini yalıtın · replay'de açmak için tıklayın",
+    "copyThrow": "setpos kopyala",
+    "copied": "Kopyalandı",
+    "copyFallback": "Bu komutu kopyalayın:"
   },
   "utilities": {
     "tabs": {
@@ -479,5 +486,36 @@
     "watch": "İzle",
     "pickMap": "Bir harita seçin",
     "soon": "Yakında"
+  },
+  "landing": {
+    "cta": "Uygulamayı aç",
+    "secondary": "Kaynak kodunu GitHub'da gör",
+    "badge": "Ücretsiz · açık kaynak · %100 tarayıcınızda",
+    "title": "CS2 demolarını 2D izleyin",
+    "subtitle": "Bir demo sürükleyin ve maçı round round takip edin: konumlar, bombalar, atışlar, ekonomi ve iletişim. Kurulum yok ve hiçbir sunucuya bir şey gönderilmez.",
+    "showcaseAlt": "Dust2 radarında bir CS2 maçının 2D replay'i",
+    "howTitle": "Nasıl çalışır",
+    "step1Title": "1. Demonuzu ekleyin",
+    "step1Body": "Maçınızın .dem dosyasını (veya .gz, .zip, .zst) uygulamaya sürükleyin.",
+    "step2Title": "2. Tam burada işliyoruz",
+    "step2Body": "Rust/WebAssembly ile yazılmış bir ayrıştırıcı demoyu tarayıcınızda okur. Hiçbir şey bilgisayarınızdan çıkmaz.",
+    "step3Title": "3. İzleyin ve analiz edin",
+    "step3Body": "2D replay'i izleyin; heatmap, utility, ekonomi ve düelloları inceleyin.",
+    "featuresTitle": "Neler sunuyor",
+    "replayTitle": "2D replay",
+    "replayBody": "Oyuncuları, atışları, bombaları ve C4'ü radar üzerinde takip edin; hız kontrolü ve round bazlı zaman çizelgesi ile.",
+    "heatmapsTitle": "Heatmap'ler",
+    "heatmapsBody": "Her takımın nerede konumlandığını ve bombaların nereye düştüğünü harita, taraf ve round bazında görün.",
+    "duelsTitle": "Düellolar",
+    "duelsBody": "Her çatışmayı kimin kazandığını; filtrelenebilir kill, ölüm ve trade'lerle anlayın.",
+    "utilitiesTitle": "Utility",
+    "utilitiesBody": "Atılan her bombayı inceleyin ve aynı atışı çalışmak için setpos'u kopyalayın.",
+    "economyTitle": "Ekonomi",
+    "economyBody": "Her oyuncunun her round'da ne aldığını ve takım parasının nasıl değiştiğini görün.",
+    "offlineTitle": "Çevrimdışı çalışır",
+    "offlineBody": "Uygulama olarak kurun ve internetsiz kullanın. Demo geçmişiniz yalnızca cihazınızda kalır.",
+    "privacyTitle": "Demonuz bilgisayarınızdan çıkmaz",
+    "privacyBody": "Tüm işlem tarayıcıda gerçekleşir. Yükleme, hesap veya maçlarınızın takibi yoktur.",
+    "finalCta": "Uygulamayı aç"
   }
 }

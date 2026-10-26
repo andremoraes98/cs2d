@@ -171,6 +171,10 @@
     "showElapsed": "Afficher le temps écoulé",
     "autoZoom": "Zoom automatique",
     "autoZoomDesc": "Cadre tous les joueurs sur la map",
+    "view2dTip": "Vue radar 2D (V)",
+    "view3dTip": "Vue 3D (V), expérimentale",
+    "only2d": "Les commentaires et le mode coach ne sont disponibles qu'en 2D",
+    "cutHeight": "Coupe du toit",
     "lowQualityEffects": "Mode performance",
     "lowQualityEffectsDesc": "Affiche fumigènes et cocktails comme de simples cercles, pour les machines plus faibles",
     "autoAdvance": "Avance automatique",
@@ -268,7 +272,10 @@
     "allPlayers": "Tous les joueurs",
     "empty": "Aucune grenade pour les filtres actuels.",
     "unknown": "Inconnu",
-    "hint": "Survolez une grenade pour isoler sa trajectoire · cliquez pour l'ouvrir dans le replay"
+    "hint": "Survolez une grenade pour isoler sa trajectoire · cliquez pour l'ouvrir dans le replay",
+    "copyThrow": "Copier setpos",
+    "copied": "Copié",
+    "copyFallback": "Copiez cette commande :"
   },
   "utilities": {
     "tabs": {
@@ -479,5 +486,36 @@
     "watch": "Regarder",
     "pickMap": "Choisissez une map",
     "soon": "Bientôt"
+  },
+  "landing": {
+    "cta": "Ouvrir l'app",
+    "secondary": "Voir le code sur GitHub",
+    "badge": "Gratuit · open source · 100 % dans votre navigateur",
+    "title": "Revoyez vos démos CS2 en 2D",
+    "subtitle": "Déposez une démo et suivez la partie round par round : positions, grenades, tirs, économie et communications. Rien à installer, et rien n'est envoyé à un serveur.",
+    "showcaseAlt": "Replay 2D d'une partie CS2 sur le radar de Dust2",
+    "howTitle": "Comment ça marche",
+    "step1Title": "1. Ajoutez votre démo",
+    "step1Body": "Glissez le fichier .dem (ou .gz, .zip, .zst) de votre partie dans l'app.",
+    "step2Title": "2. Traitement sur place",
+    "step2Body": "Un parser Rust/WebAssembly lit la démo dans votre navigateur. Rien ne quitte votre machine.",
+    "step3Title": "3. Revoyez et analysez",
+    "step3Body": "Regardez le replay 2D et explorez heatmaps, utilitaires, économie et duels.",
+    "featuresTitle": "Ce que vous trouverez",
+    "replayTitle": "Replay 2D",
+    "replayBody": "Suivez joueurs, tirs, grenades et bombe sur le radar, avec contrôle de la vitesse et chronologie par round.",
+    "heatmapsTitle": "Heatmaps",
+    "heatmapsBody": "Voyez où chaque équipe se positionne et où atterrissent les grenades, par carte, côté et round.",
+    "duelsTitle": "Duels",
+    "duelsBody": "Comprenez qui remporte chaque affrontement, avec kills, morts et trades filtrables.",
+    "utilitiesTitle": "Utilitaires",
+    "utilitiesBody": "Revoyez chaque grenade lancée et copiez le setpos pour vous entraîner sur le même lineup.",
+    "economyTitle": "Économie",
+    "economyBody": "Voyez ce que chaque joueur a acheté à chaque round et l'évolution de l'argent de l'équipe.",
+    "offlineTitle": "Fonctionne hors ligne",
+    "offlineBody": "Installez-la comme une app et utilisez-la sans internet. Votre historique de démos reste uniquement sur votre appareil.",
+    "privacyTitle": "Votre démo ne quitte pas votre ordinateur",
+    "privacyBody": "Tout le traitement se fait dans le navigateur. Pas d'envoi, pas de compte, aucun suivi de vos parties.",
+    "finalCta": "Ouvrir l'app"
   }
 }

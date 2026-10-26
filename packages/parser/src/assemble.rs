@@ -750,6 +750,9 @@ pub(crate) fn build_replay(c: &Collector) -> Replay {
             segments.push(seg);
         }
     }
+    // Grenade releases, matched to their flight below (same thrower and kind, the
+    // release shortly before the first flight point); each release is used once.
+    let mut throw_used = vec![false; c.throws.len()];
     for seg in segments {
         let kind = seg[0].1;
         // First known thrower of the segment (may be missing in the early ticks).
@@ -776,10 +779,23 @@ pub(crate) fn build_replay(c: &Collector) -> Replay {
                 y: round1(y),
             })
             .collect();
+        let first_tick = seg[0].0;
+        let throw = thrower.as_ref().and_then(|steam| {
+            let i = (0..c.throws.len())
+                .filter(|&i| {
+                    let t = &c.throws[i];
+                    !throw_used[i] && t.kind == kind && &t.steam_id == steam
+                        && t.tick <= first_tick && first_tick - t.tick <= 96
+                })
+                .max_by_key(|&i| c.throws[i].tick)?;
+            throw_used[i] = true;
+            Some(grenade_throw(&c.throws[i]))
+        });
         rounds[idx].grenade_paths.push(GrenadePath {
             kind: kind.as_str().to_string(),
             points,
             thrower_steam_id: thrower,
+            throw,
         });
     }
 
@@ -905,4 +921,28 @@ pub(crate) fn build_voice_blob(c: &Collector) -> Vec<u8> {
         }
     }
     out
+}
+
+/// A release as the game's `getpos` would print it: the eye position (feet + 64,
+/// or + 46 crouched) and the raw eye angles. A jumpthrow is released mid-air, so
+/// its setpos uses the takeoff point (the last feet height on the ground), standing.
+fn grenade_throw(t: &crate::collector::RawThrow) -> GrenadeThrow {
+    let (feet, eye) = if t.airborne {
+        (t.ground_z.filter(|g| *g <= t.z && t.z - g < 80.0).unwrap_or(t.z), 64.0)
+    } else {
+        (t.z, if t.crouched { 46.0 } else { 64.0 })
+    };
+    GrenadeThrow {
+        x: round2(t.x),
+        y: round2(t.y),
+        z: round2(feet + eye),
+        pitch: round2(t.pitch),
+        yaw: round2(t.yaw),
+        jump: t.airborne,
+        crouch: t.crouched && !t.airborne,
+    }
+}
+
+fn round2(n: f64) -> f64 {
+    (n * 100.0).round() / 100.0
 }

@@ -7,7 +7,7 @@ annotations. Nothing is uploaded; the demo is parsed in the browser via WASM.
 ## Data flow
 
 ```
-router.ts
+app/router.ts          `/` landing (first visit only) · `/app/*` is the analyzer
   └─ DemoAnalyzerView.vue        route entry: file picker, recent demos, tabs
        │
        ├─ ingest/                bytes ──► Replay
@@ -28,6 +28,9 @@ router.ts
        ├─ player/                play the Replay back
        │    ViewerStage          orchestrator: wires the pieces below together
        │    ViewerMap            the 2D radar canvas (players, grenades, shots…)
+       │    ViewerMap3D          experimental 3D view (three.js, lazy-loaded): the map mesh from
+       │      │                    `/map-export` (map3dGeometry) + players and the dynamic layer
+       │      │                    useMapEffects3D (tracers, grenade arcs/effects, kills, C4)
        │    ViewerControls       transport bar (+ ViewerTimeline, markers)
        │    ViewerRoster / ViewerScoreboard / ViewerKillfeed / ViewerChat
        │    useReplay            playback clock, tick state, speed

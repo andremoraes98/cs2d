@@ -12,6 +12,7 @@ import {
   AlertDialogAction,
 } from 'reka-ui'
 import UiIcon from '@/ui/UiIcon.vue'
+import { UPLOAD_PATH, demoPath } from '@/app/paths'
 import {
   ContextMenu,
   ContextMenuContent,
@@ -64,7 +65,7 @@ function openPreview(demo: RecentDemo) {
 
 function openRecent(demo: RecentDemo) {
   if (loadingId.value) return
-  router.push(`/${demo.id}`)
+  router.push(demoPath(demo.id))
 }
 
 function copyName(demo: RecentDemo) {
@@ -195,7 +196,7 @@ function removeMaybeResetFilter(id: string) {
         <UiIcon name="library" class="h-8 w-8 text-ink-600" />
         <p class="text-sm text-ink-400">{{ t('library.empty') }}</p>
         <RouterLink
-          to="/"
+          :to="UPLOAD_PATH"
           class="mt-1 inline-flex items-center gap-1.5 rounded-md bg-surge-500 px-3 py-1.5 text-sm font-medium text-ink-950 transition-colors hover:bg-surge-400"
         >
           <UiIcon name="upload" class="h-4 w-4" />

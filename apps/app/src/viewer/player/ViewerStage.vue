@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { computed, inject, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, inject, ref, watch } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
 import { appFullscreenKey } from '@/shell/appFullscreen'
 import type { Replay, VoiceData } from '@/viewer/domain/schema'
 import ViewerMap from '@/viewer/player/ViewerMap.vue'
+import { webglSupported } from '@/viewer/player/webgl'
+// three.js is only fetched when the 3D view is first turned on.
+const ViewerMap3D = defineAsyncComponent(() => import('@/viewer/player/ViewerMap3D.vue'))
 import ViewerControls from '@/viewer/player/ViewerControls.vue'
 import CoachToolbar from '@/viewer/player/CoachToolbar.vue'
 import ViewerRoster from '@/viewer/player/ViewerRoster.vue'
@@ -27,6 +30,7 @@ import { useViewerShortcuts } from '@/viewer/player/useViewerShortcuts'
 import { useCommentFlow } from '@/viewer/player/useCommentFlow'
 import { useContextMenu } from '@/viewer/player/useContextMenu'
 import { SIDE_COLOR } from '@/viewer/domain/colors'
+import { MAP_CALIBRATION } from '@/viewer/domain/calibration'
 import { useI18n } from '@/app/i18n'
 
 const { t } = useI18n()
@@ -224,6 +228,27 @@ const { exporting, exportError, exportReplay } = useReplayExport({
 // Advanced options persist across sessions (localStorage).
 const autoZoom = useLocalStorage('viewer.advanced.autoZoom', false)
 const lowQualityEffects = useLocalStorage('viewer.advanced.lowQualityEffects', false)
+// 2D / 3D view switch (3D = three.js, experimental). The preference persists, but 3D
+// is only offered for maps that have an exported mesh (the calibrated ones) and
+// where WebGL works; without it the stage stays in 2D whatever the stored preference.
+const view3dPref = useLocalStorage('viewer.advanced.view3d', false)
+const webglOk = ref(webglSupported())
+const has3d = computed(
+  () => webglOk.value && !!r.replay.value?.map && r.replay.value.map in MAP_CALIBRATION,
+)
+const view3d = computed(() => view3dPref.value && has3d.value)
+/** Comments and the coach board only exist in 2D, so entering 3D leaves them. */
+function setView3d(on: boolean) {
+  if (on && !has3d.value) return
+  if (on) {
+    if (coachMode.value) toggleCoachMode()
+    if (commentMode.value) toggleCommentMode()
+  }
+  view3dPref.value = on
+}
+function toggleView() {
+  setView3d(!view3d.value)
+}
 
 // Follow a player: clicking a roster card centers and tracks them on the map.
 // Clicking the same player (or Esc / the exit badge) stops following.
@@ -305,6 +330,7 @@ const { scoreboardOpen } = useViewerShortcuts({
   seek: (s) => r.seekBySeconds(s),
   undo: () => board.undo(),
   redo: () => board.redo(),
+  toggleView,
 })
 
 // Container hooks: `pause` stops playback when leaving this tab (the stage stays
@@ -318,7 +344,21 @@ defineExpose({ pause: r.pause, jumpToThrow, roundIndex: r.roundIndex })
     <ContextMenuTrigger as-child>
       <div ref="stageEl" class="relative h-full w-full select-none bg-ink-950">
         <!-- Fullscreen map (zoom/pan) -->
+        <ViewerMap3D
+          v-if="view3d"
+          :players="r.players.value"
+          :players-by-id="r.playersById.value"
+          :calibration="calibration"
+          :radar-src="activeLevelRadar"
+          :mesh-src="r.replay.value?.map ? `/maps/${r.replay.value.map}.mesh.bin.gz` : undefined"
+          :level-range="activeLevelRange"
+          :round="r.round.value"
+          :current-t="r.currentT.value"
+          :bomb-blink="r.bombBlink.value"
+          @unsupported="webglOk = false"
+        />
         <ViewerMap
+          v-else
       :players="r.players.value"
       :current-t="r.currentT.value"
       :round="r.round.value"
@@ -465,10 +505,35 @@ defineExpose({ pause: r.pause, jumpToThrow, roundIndex: r.roundIndex })
 
         <!-- Right: coach mode, export (the comments panel opens via comment mode) -->
         <div v-if="!hudHidden" class="pointer-events-auto flex items-center gap-1.5">
+          <!-- 2D / 3D view switch (shortcut: V) -->
+          <div v-if="has3d" class="flex items-center rounded-full bg-white/5 p-0.5 text-xs font-semibold">
+            <button
+              v-tooltip="t('viewer.view2dTip')"
+              class="h-8 min-w-9 cursor-pointer rounded-full px-2.5 transition-colors duration-150"
+              :class="!view3d ? 'bg-white/15 text-white' : 'text-ink-300 hover:text-white'"
+              @click="setView3d(false)"
+            >
+              2D
+            </button>
+            <button
+              v-tooltip="t('viewer.view3dTip')"
+              class="h-8 min-w-9 cursor-pointer rounded-full px-2.5 transition-colors duration-150"
+              :class="view3d ? 'bg-surge-500 text-white' : 'text-ink-300 hover:text-white'"
+              @click="setView3d(true)"
+            >
+              3D
+            </button>
+          </div>
           <button
-            v-tooltip="t('viewer.coach.enter')"
-            class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-ink-200 transition-colors duration-150 hover:bg-white/10 hover:text-white"
-            @click="toggleCoachMode"
+            v-tooltip="view3d ? t('viewer.only2d') : t('viewer.coach.enter')"
+            class="flex h-9 w-9 items-center justify-center rounded-full transition-colors duration-150"
+            :class="
+              view3d
+                ? 'cursor-not-allowed text-ink-500 opacity-50'
+                : 'cursor-pointer text-ink-200 hover:bg-white/10 hover:text-white'
+            "
+            :aria-disabled="view3d"
+            @click="!view3d && toggleCoachMode()"
           >
             <UiIcon name="pencil" class="h-5 w-5" />
           </button>
@@ -640,6 +705,7 @@ defineExpose({ pause: r.pause, jumpToThrow, roundIndex: r.roundIndex })
           :players-by-id="r.playersById.value"
           :commented-rounds="commentedRounds"
           :comment-mode="commentMode"
+          :comment-disabled="view3d"
           :fullscreen="isFullscreen"
           @toggle="r.toggle"
           @toggle-comment-mode="toggleCommentMode"

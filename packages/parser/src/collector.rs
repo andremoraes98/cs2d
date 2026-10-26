@@ -81,6 +81,22 @@ pub(crate) enum C4Sample {
     Ground(f64, f64, f64),
 }
 
+/// A grenade release: thrower, kind, feet position, raw eye angles, crouched/in the
+/// air, and the feet height at the last tick on the ground (for jumpthrows).
+pub(crate) struct RawThrow {
+    pub(crate) tick: u32,
+    pub(crate) steam_id: String,
+    pub(crate) kind: GrenadeKind,
+    pub(crate) x: f64,
+    pub(crate) y: f64,
+    pub(crate) z: f64,
+    pub(crate) pitch: f64,
+    pub(crate) yaw: f64,
+    pub(crate) crouched: bool,
+    pub(crate) airborne: bool,
+    pub(crate) ground_z: Option<f64>,
+}
+
 #[derive(Default)]
 pub(crate) struct Collector {
     pub(crate) map_name: String,
@@ -130,6 +146,16 @@ pub(crate) struct Collector {
     pub(crate) hurts: Vec<(u32, String, i32, String)>,
     /// Shots (tracers): (tick, x, y, yaw) of the shooter.
     pub(crate) shots: Vec<(u32, f64, f64, f64)>,
+    /// Grenade releases (weapon_fire of a grenade): where the thrower stood and aimed.
+    /// Attached to the matching flight path at build time, for "copy setpos".
+    pub(crate) throws: Vec<RawThrow>,
+    /// steamId -> height (z) of the player's feet the last tick they stood on the
+    /// ground: the takeoff point of a jumpthrow (the release happens mid-air).
+    pub(crate) last_ground_z: HashMap<String, f64>,
+    /// Releases seen this tick: (tick, pawn handle, steamId, kind). The pawn's state
+    /// is read at the end of the tick: during the event it is still the previous
+    /// tick's (a jumpthrow would read as on the ground).
+    pub(crate) pending_throws: Vec<(u32, u32, String, GrenadeKind)>,
     /// Blinds: (tick, userid, duration, flasher steamId). The victim steamId comes
     /// from the userid->steam map; the flasher is resolved from the attacker pawn.
     pub(crate) blinds_raw: Vec<(u32, i32, f64, Option<String>)>,
@@ -263,6 +289,28 @@ impl Collector {
         Ok(())
     }
 
+    #[on_tick_end]
+    fn on_tick_end(&mut self, ctx: &Context) -> ObserverResult {
+        for (tick, handle, steam_id, kind) in std::mem::take(&mut self.pending_throws) {
+            let Ok(p) = ctx.entities().get_by_handle(handle as usize) else { continue };
+            let (pitch, yaw) = pawn_eye_angles(p);
+            self.throws.push(RawThrow {
+                tick,
+                kind,
+                x: world_coord(p, "CBodyComponent.m_cellX", "CBodyComponent.m_vecX"),
+                y: world_coord(p, "CBodyComponent.m_cellY", "CBodyComponent.m_vecY"),
+                z: world_coord(p, "CBodyComponent.m_cellZ", "CBodyComponent.m_vecZ"),
+                pitch,
+                yaw,
+                crouched: prop_bool(p, "m_pMovementServices.m_bDucked"),
+                airborne: prop_i32(p, "m_fFlags") & 1 == 0,
+                ground_z: self.last_ground_z.get(&steam_id).copied(),
+                steam_id,
+            });
+        }
+        Ok(())
+    }
+
     #[on_tick_start]
     fn on_tick_start(&mut self, ctx: &Context) -> ObserverResult {
         let tick = ctx.tick();
@@ -293,6 +341,12 @@ impl Collector {
                 let steam = prop_u64(ctrl, "m_steamID");
                 if steam != 0 {
                     self.pawn_to_steam.insert(pawn.index(), steam.to_string());
+                    // FL_ONGROUND (bit 0 of m_fFlags): remember the feet height, so a
+                    // jumpthrow's setpos can use the takeoff point.
+                    if prop_i32(pawn, "m_fFlags") & 1 != 0 {
+                        let z = world_coord(pawn, "CBodyComponent.m_cellZ", "CBodyComponent.m_vecZ");
+                        self.last_ground_z.insert(steam.to_string(), z);
+                    }
                 }
             }
         }
@@ -638,6 +692,7 @@ impl Collector {
                 let skip = ["knife", "grenade", "flash", "smoke", "molotov", "incgrenade",
                     "inc_", "decoy", "c4", "bomb", "taser", "zeus", "healthshot"];
                 if skip.iter().any(|s| w.contains(s)) {
+                    self.record_throw(ctx, ge, tick, &w);
                     return Ok(());
                 }
                 if let Some(ph) = ev_i32(ge, "userid_pawn") {
@@ -683,6 +738,31 @@ impl Collector {
             _ => {}
         }
         Ok(())
+    }
+}
+
+impl Collector {
+    /// A grenade's weapon_fire is its release: note who threw what; the thrower's
+    /// position, eye angles and stance are read at the end of the tick (on_tick_end),
+    /// to offer the throw as a `setpos ...;setang ...` line.
+    fn record_throw(&mut self, ctx: &Context, ge: &GameEvent, tick: u32, weapon: &str) {
+        let kind = if weapon.contains("smoke") {
+            GrenadeKind::Smoke
+        } else if weapon.contains("flash") {
+            GrenadeKind::Flash
+        } else if weapon.contains("molotov") || weapon.contains("incgrenade") || weapon.contains("inc_") {
+            GrenadeKind::Fire
+        } else if weapon.contains("hegrenade") {
+            GrenadeKind::He
+        } else if weapon.contains("decoy") {
+            GrenadeKind::Decoy
+        } else {
+            return; // knife, C4, zeus...
+        };
+        let Some(ph) = ev_i32(ge, "userid_pawn") else { return };
+        let Ok(p) = ctx.entities().get_by_handle(ph as u32 as usize) else { return };
+        let Some(steam_id) = self.pawn_to_steam.get(&p.index()).cloned() else { return };
+        self.pending_throws.push((tick, ph as u32, steam_id, kind));
     }
 }
 

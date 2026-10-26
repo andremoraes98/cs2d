@@ -3,6 +3,7 @@ import { computed, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import UiIcon from '@/ui/UiIcon.vue'
 import { useI18n } from '@/app/i18n'
+import { UPLOAD_PATH } from '@/app/paths'
 import TournamentMatchCard from './TournamentMatchCard.vue'
 import {
   bracketColumns,
@@ -51,7 +52,7 @@ function onPlay(match: TournamentMatch, map: TournamentMapReplay) {
   // open straight past the freeze (`skipFreeze`) and start playing (`autoplay`).
   // The freeze stays scrubbable to the left.
   router.push({
-    path: '/',
+    path: UPLOAD_PATH,
     query: {
       replay: map.replay,
       name: `${matchup} · ${mapName}`,

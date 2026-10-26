@@ -2,39 +2,24 @@
 import { computed, provide, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useFullscreen, useMediaQuery } from '@vueuse/core'
-import { Flag } from '@blade-flags/vue'
-import { localeFlags } from '@/shell/localeFlags'
 import UiIcon from '@/ui/UiIcon.vue'
 import AppSidebar from '@/shell/AppSidebar.vue'
 import ExtensionDialog from '@/shell/ExtensionDialog.vue'
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarTrigger,
-} from '@/ui/menubar'
+import LocaleMenu from '@/shell/LocaleMenu.vue'
 import { appFullscreenKey } from '@/shell/appFullscreen'
 import { useSidebar } from '@/shell/useSidebar'
-import { useI18n, type LocaleCode } from '@/app/i18n'
-import { useSeoHead } from '@/app/seo'
+import { useI18n } from '@/app/i18n'
 
 // App chrome: a compact collapsible sidebar for the primary nav (Upload / Library /
 // Tournaments) plus a thin top bar with a desktop-app-style Menubar (Info, Language).
 // The whole frame hides in fullscreen so the player can fill the screen.
-const { t, locale, setLocale, LOCALES } = useI18n()
-
-// Keep the document head (title, description, social tags, canonical) in sync
-// with the active route and locale.
-useSeoHead()
+const { t } = useI18n()
 
 const GITHUB_URL = 'https://github.com/zenojunior/cs2d'
 
 // The Chrome extension isn't publicly installable yet, so its entry point shows
 // only in development; the production build hides it.
 const showExtension = import.meta.env.DEV
-
-const current = computed(() => LOCALES.find((l) => l.code === locale.value) ?? LOCALES[0])
 
 // Primary-sidebar state, driven from the start of the top bar. On desktop the
 // toggle collapses/expands the in-flow sidebar; on mobile it opens/closes the
@@ -64,7 +49,7 @@ watch(isDesktop, (desktop) => {
 // `replay` query (external tournament replay). In that case we drop the sidebar and
 // swap the toggle for a Back button, so the focused viewing layout is clearly distinct.
 const inDemo = computed(
-  () => route.name === 'demoviewer' && Boolean(route.params.id || route.query.replay),
+  () => route.name === 'demo' || (route.name === 'demoviewer' && Boolean(route.query.replay)),
 )
 
 // Leaving a demo lands on a non-demo hub: the originating bracket when a tournament
@@ -135,31 +120,7 @@ provide(appFullscreenKey, { isFullscreen, toggle })
             <span class="hidden sm:inline">GitHub</span>
           </a>
 
-          <Menubar>
-            <MenubarMenu>
-              <MenubarTrigger :aria-label="t('shell.language')">
-                <Flag :code="current.flag" :flags="localeFlags" class="h-4 w-4 shrink-0" />
-                <span class="font-mono text-[11px] font-medium">{{ current.label }}</span>
-                <UiIcon name="chevron-down" class="h-3 w-3 text-ink-500" />
-              </MenubarTrigger>
-              <MenubarContent align="end" class="max-h-72 w-44 overflow-y-auto">
-                <MenubarItem
-                  v-for="l in LOCALES"
-                  :key="l.code"
-                  :class="locale === l.code ? 'bg-ink-800 text-ink-50' : ''"
-                  @select="setLocale(l.code as LocaleCode)"
-                >
-                  <Flag :code="l.flag" :flags="localeFlags" class="h-4 w-4 shrink-0" />
-                  <span class="flex-1 truncate">{{ l.name }}</span>
-                  <UiIcon
-                    v-if="locale === l.code"
-                    name="check"
-                    class="h-3.5 w-3.5 shrink-0 text-surge-400"
-                  />
-                </MenubarItem>
-              </MenubarContent>
-            </MenubarMenu>
-          </Menubar>
+          <LocaleMenu />
         </div>
 
         <!-- Center: tool actions (via Teleport, e.g. the viewer tabs). On narrow

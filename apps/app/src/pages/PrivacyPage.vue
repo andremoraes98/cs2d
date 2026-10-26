@@ -7,7 +7,7 @@ import { useI18n } from '@/app/i18n'
 // is translatable; the contact email is data rendered as a link.
 const { t, locale } = useI18n()
 
-const CONTACT_EMAIL = 'me@zenojunior.com'
+const CONTACT_EMAIL = 'contact@cs2d.app'
 
 // Date the policy was last reviewed; formatted per the active locale.
 const LAST_UPDATED = '2026-06-21'

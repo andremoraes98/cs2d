@@ -244,6 +244,24 @@ pub(crate) struct GrenadePath {
     /// Who threw the grenade (steamId64), when resolved. Lets the grenades finder
     /// filter by player/side; null when undetermined.
     pub(crate) thrower_steam_id: Option<String>,
+    /// Where it was thrown from (eye position and angles, for `setpos`). Omitted when
+    /// the release could not be matched (older replays don't have it either).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) throw: Option<GrenadeThrow>,
+}
+
+/// Where a grenade was thrown from, as the game's `getpos` gives it: the eye
+/// position (feet + 64 standing, + 46 crouched; a jumpthrow from its takeoff point)
+/// and the raw eye angles, so `setpos x y z;setang pitch yaw 0` repeats the throw.
+#[derive(Serialize)]
+pub(crate) struct GrenadeThrow {
+    pub(crate) x: f64,
+    pub(crate) y: f64,
+    pub(crate) z: f64,
+    pub(crate) pitch: f64,
+    pub(crate) yaw: f64,
+    pub(crate) jump: bool,
+    pub(crate) crouch: bool,
 }
 
 #[derive(Serialize)]
