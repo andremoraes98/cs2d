@@ -389,6 +389,8 @@
     "of": "sur"
   },
   "report": {
+    "open": "Ouvrir le rapport","close": "Fermer le rapport","export": "Exporter",
+    "context": { "combat": { "title": "Rapport de combat", "subtitle": "Kills, dégâts et performance par round." }, "duels": { "title": "Rapport des duels", "subtitle": "Duels individuels et premiers duels." }, "utility": { "title": "Rapport des utilitaires", "subtitle": "Utilisation, aveuglements et impact." }, "objectives": { "title": "Rapport des objectifs", "subtitle": "Plants et désamorçages enregistrés." }, "economy": { "title": "Rapport économique", "subtitle": "Résumé économique par côté." } },
     "title": "Rapport du joueur",
     "selectPlayer": "Sélectionner un joueur",
     "rounds": "rounds",
@@ -441,6 +443,7 @@
       "flashAssists": "Assists flash",
       "plants": "Bombes posées",
       "defuses": "Désamorçages"
+      ,"rounds": "Rounds","roundsWon": "Rounds gagnés","roundsLost": "Rounds perdus","startMoney": "Argent initial moyen","equipValue": "Valeur moyenne de l'équipement"
     }
   },
   "outcome": {

@@ -389,6 +389,8 @@
     "of": "/"
   },
   "report": {
+    "open": "Raporu aç","close": "Raporu kapat","export": "Dışa aktar",
+    "context": { "combat": { "title": "Çatışma raporu", "subtitle": "Öldürmeler, hasar ve raunt performansı." }, "duels": { "title": "Düello raporu", "subtitle": "Bireysel ve açılış düelloları." }, "utility": { "title": "Utility raporu", "subtitle": "Kullanım, kör etmeler ve etki." }, "objectives": { "title": "Hedef raporu", "subtitle": "Kurulan ve imha edilen bombalar." }, "economy": { "title": "Ekonomi raporu", "subtitle": "Tarafa göre ekonomik özet." } },
     "title": "Oyuncu raporu",
     "selectPlayer": "Oyuncu seç",
     "rounds": "raunt",
@@ -441,6 +443,7 @@
       "flashAssists": "Flash asistleri",
       "plants": "Kurulan bombalar",
       "defuses": "İmhalar"
+      ,"rounds": "Rauntlar","roundsWon": "Kazanılan rauntlar","roundsLost": "Kaybedilen rauntlar","startMoney": "Ortalama başlangıç parası","equipValue": "Ortalama ekipman değeri"
     }
   },
   "outcome": {

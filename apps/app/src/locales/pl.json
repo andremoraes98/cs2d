@@ -389,6 +389,8 @@
     "of": "z"
   },
   "report": {
+    "open": "Otwórz raport","close": "Zamknij raport","export": "Eksportuj",
+    "context": { "combat": { "title": "Raport walki", "subtitle": "Zabójstwa, obrażenia i wyniki rund." }, "duels": { "title": "Raport pojedynków", "subtitle": "Pojedynki indywidualne i otwierające." }, "utility": { "title": "Raport utility", "subtitle": "Użycie utility, oślepienia i wpływ." }, "objectives": { "title": "Raport celów", "subtitle": "Podłożenia i rozbrojenia bomb." }, "economy": { "title": "Raport ekonomii", "subtitle": "Podsumowanie ekonomii według strony." } },
     "title": "Raport gracza",
     "selectPlayer": "Wybierz gracza",
     "rounds": "rundy",
@@ -441,6 +443,7 @@
       "flashAssists": "Asysty flash",
       "plants": "Podłożone bomby",
       "defuses": "Rozbrojenia"
+      ,"rounds": "Rundy","roundsWon": "Wygrane rundy","roundsLost": "Przegrane rundy","startMoney": "Średnie pieniądze początkowe","equipValue": "Średnia wartość wyposażenia"
     }
   },
   "outcome": {

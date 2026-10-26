@@ -389,6 +389,8 @@
     "of": "de"
   },
   "report": {
+    "open": "Abrir informe","close": "Cerrar informe","export": "Exportar",
+    "context": { "combat": { "title": "Informe de combate", "subtitle": "Bajas, daño y rendimiento por ronda." }, "duels": { "title": "Informe de duelos", "subtitle": "Duelos individuales y de apertura." }, "utility": { "title": "Informe de utilidad", "subtitle": "Uso, cegueras e impacto de utilidad." }, "objectives": { "title": "Informe de objetivos", "subtitle": "Plantas y desactivaciones registradas." }, "economy": { "title": "Informe de economía", "subtitle": "Resumen económico por lado." } },
     "title": "Informe del jugador",
     "selectPlayer": "Seleccionar jugador",
     "rounds": "rondas",
@@ -441,6 +443,7 @@
       "flashAssists": "Asistencias de flash",
       "plants": "Bombas plantadas",
       "defuses": "Desactivaciones"
+      ,"rounds": "Rondas","roundsWon": "Rondas ganadas","roundsLost": "Rondas perdidas","startMoney": "Dinero inicial medio","equipValue": "Valor medio del equipo"
     }
   },
   "outcome": {
