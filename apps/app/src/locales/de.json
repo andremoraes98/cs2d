@@ -389,9 +389,8 @@
     "of": "von"
   },
   "report": {
-    "open": "Bericht öffnen","close": "Bericht schließen","export": "Exportieren",
+    "open": "Bericht","title": "Bericht","subtitle": "Spieldaten nach Kontext organisiert.","close": "Bericht schließen","export": "Exportieren",
     "context": { "combat": { "title": "Kampfbericht", "subtitle": "Kills, Schaden und Rundenleistung." }, "duels": { "title": "Duellbericht", "subtitle": "Einzel- und Eröffnungsduelle." }, "utility": { "title": "Utility-Bericht", "subtitle": "Utility-Nutzung, Blendungen und Einfluss." }, "objectives": { "title": "Zielbericht", "subtitle": "Erfasste Bombenpflanzungen und Entschärfungen." }, "economy": { "title": "Wirtschaftsbericht", "subtitle": "Wirtschaftliche Zusammenfassung pro Seite." } },
-    "title": "Spielerbericht",
     "selectPlayer": "Spieler auswählen",
     "rounds": "Runden",
     "ranking": "Match-Rangliste",
@@ -410,7 +409,9 @@
       "combat": "Kampf",
       "duels": "Duelle",
       "utility": "Utility",
-      "impact": "Einfluss"
+      "impact": "Einfluss",
+      "economy": "Wirtschaft",
+      "objectives": "Ziele"
     },
     "metrics": {
       "kda": "KDA",

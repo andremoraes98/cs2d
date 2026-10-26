@@ -389,9 +389,8 @@
     "of": "de"
   },
   "report": {
-    "open": "Abrir informe","close": "Cerrar informe","export": "Exportar",
+    "open": "Informe","title": "Informe","subtitle": "Datos organizados por contexto de la partida.","close": "Cerrar informe","export": "Exportar",
     "context": { "combat": { "title": "Informe de combate", "subtitle": "Bajas, daño y rendimiento por ronda." }, "duels": { "title": "Informe de duelos", "subtitle": "Duelos individuales y de apertura." }, "utility": { "title": "Informe de utilidad", "subtitle": "Uso, cegueras e impacto de utilidad." }, "objectives": { "title": "Informe de objetivos", "subtitle": "Plantas y desactivaciones registradas." }, "economy": { "title": "Informe de economía", "subtitle": "Resumen económico por lado." } },
-    "title": "Informe del jugador",
     "selectPlayer": "Seleccionar jugador",
     "rounds": "rondas",
     "ranking": "Ranking de la partida",
@@ -410,7 +409,9 @@
       "combat": "Combate",
       "duels": "Duelos",
       "utility": "Utilidad",
-      "impact": "Impacto"
+      "impact": "Impacto",
+      "economy": "Economía",
+      "objectives": "Objetivos"
     },
     "metrics": {
       "kda": "KDA",
