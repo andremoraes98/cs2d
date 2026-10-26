@@ -34,7 +34,6 @@ const emit = defineEmits<{
 }>()
 
 const SUBS: Sub[] = ['kills', 'deaths', 'opening-map', 'stats']
-const reportDomain = ref<'combat' | 'duels'>('duels')
 const reportOpen = ref(false)
 </script>
 
@@ -55,19 +54,10 @@ const reportOpen = ref(false)
       </button>
       <button
         type="button"
-        class="ml-2 inline-flex shrink-0 items-center gap-1.5 rounded-md border border-ink-700 px-3 py-1 text-sm font-medium text-ink-300 transition-colors hover:border-ink-500 hover:text-ink-50"
-        @click="reportDomain = 'duels'; reportOpen = true"
+        class="inline-flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1 text-sm font-medium text-ink-300 transition-colors hover:border-ink-500 hover:text-ink-50"
+        @click="reportOpen = true"
       >
-        <UiIcon name="bar-chart" class="h-4 w-4" />
         {{ t('report.open') }}
-      </button>
-      <button
-        type="button"
-        class="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-ink-700 px-3 py-1 text-sm font-medium text-ink-300 transition-colors hover:border-ink-500 hover:text-ink-50"
-        @click="reportDomain = 'combat'; reportOpen = true"
-      >
-        <UiIcon name="target" class="h-4 w-4" />
-        {{ t('report.context.combat.title') }}
       </button>
     </div>
 
@@ -85,5 +75,5 @@ const reportOpen = ref(false)
       />
     </div>
   </div>
-  <PlayerReportPanel v-if="reportOpen" :open="true" :domain="reportDomain" :replay="props.replay" :analysis="props.analysis" @update:open="reportOpen = $event" />
+  <PlayerReportPanel v-if="reportOpen" :open="true" :domain="['combat', 'duels']" :replay="props.replay" :analysis="props.analysis" @update:open="reportOpen = $event" />
 </template>

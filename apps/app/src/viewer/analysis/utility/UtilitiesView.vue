@@ -56,10 +56,9 @@ const reportOpen = ref(false)
       </button>
       <button
         type="button"
-        class="ml-2 inline-flex shrink-0 items-center gap-1.5 rounded-md border border-ink-700 px-3 py-1 text-sm font-medium text-ink-300 transition-colors hover:border-ink-500 hover:text-ink-50"
+        class="inline-flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1 text-sm font-medium text-ink-300 transition-colors hover:border-ink-500 hover:text-ink-50"
         @click="reportOpen = true"
       >
-        <UiIcon name="bar-chart" class="h-4 w-4" />
         {{ t('report.open') }}
       </button>
     </div>

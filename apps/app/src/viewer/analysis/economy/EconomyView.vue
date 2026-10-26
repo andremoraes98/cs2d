@@ -197,12 +197,7 @@ const sheetRow = computed(() => (sheetRound.value === null ? null : breakdown.va
   <div class="h-full w-full overflow-y-auto [scrollbar-gutter:stable]">
     <div class="mx-auto flex max-w-5xl justify-end px-6 pt-4">
       <button type="button" class="inline-flex items-center gap-1.5 rounded-md border border-ink-700 px-3 py-1.5 text-sm text-ink-300 hover:border-ink-500 hover:text-ink-50" @click="reportDomain = 'economy'">
-        <UiIcon name="bar-chart" class="h-4 w-4" />
         {{ t('report.open') }}
-      </button>
-      <button type="button" class="ml-2 inline-flex items-center gap-1.5 rounded-md border border-ink-700 px-3 py-1.5 text-sm text-ink-300 hover:border-ink-500 hover:text-ink-50" @click="reportDomain = 'objectives'">
-        <UiIcon name="target" class="h-4 w-4" />
-        {{ t('report.context.objectives.title') }}
       </button>
     </div>
     <div class="mx-auto max-w-6xl space-y-10 px-6 py-6">
@@ -397,5 +392,5 @@ const sheetRow = computed(() => (sheetRound.value === null ? null : breakdown.va
       @jump="emit('jump', $event)"
     />
   </div>
-  <PlayerReportPanel v-if="reportDomain" :open="true" :domain="reportDomain" :replay="props.replay" :analysis="props.analysis" @update:open="reportDomain = null" />
+  <PlayerReportPanel v-if="reportDomain" :open="true" :domain="['economy', 'objectives']" :replay="props.replay" :analysis="props.analysis" @update:open="reportDomain = null" />
 </template>
