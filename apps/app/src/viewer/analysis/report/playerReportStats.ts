@@ -3,215 +3,127 @@ import { isKnifeRound, roundSides } from '@/viewer/domain/rounds'
 import { computeOpeningDuels } from '@/viewer/analysis/duels/duelStats'
 import { computeDamageStats, computeFlashStats } from '@/viewer/analysis/utility/utilityStats'
 
-export interface PlayerReport {
-  steamId: string
-  name: string
-  map: string
-  roundsPlayed: number
-  roundsWon: number
-  roundWinRate: number
-  kills: number
-  assists: number
-  deaths: number
-  kda: number
-  kdr: number
-  damage: number
-  adr: number
-  headshotKills: number
-  headshotPct: number
-  duelWins: number
-  duelLosses: number
-  duelWinRate: number
-  openingWins: number
-  openingLosses: number
-  openingAttempts: number
-  openingWinRate: number
-  openingConversions: number
-  openingConversionRate: number
-  grenadesThrown: number
-  utilityPerRound: number
-  flashesThrown: number
-  enemiesBlinded: number
-  enemiesBlindedPerRound: number
-  enemyBlindDuration: number
-  blindSecondsPerFlash: number
-  killsFromBlinds: number
-  flashAssists: number
-  utilityDamage: number
-  damagingUtilityThrown: number
-  utilityDamagePerRound: number
-  utilityDamagePerThrow: number
-  utilityKills: number
-  plants: number
-  defuses: number
+export interface CombatStats { roundsPlayed: number; roundsWon: number; kills: number; assists: number; deaths: number; damage: number; headshotKills: number }
+export interface DuelStats { wins: number; losses: number; openingWins: number; openingLosses: number; openingConversions: number }
+export interface UtilityReportStats { grenadesThrown: number; flashesThrown: number; enemiesBlinded: number; enemyBlindDuration: number; killsFromBlinds: number; flashAssists: number; utilityDamage: number; damagingUtilityThrown: number; utilityKills: number }
+export interface ObjectiveStats { plants: number; defuses: number }
+export interface EconomyReportStats { rounds: number; wins: number; losses: number; startMoney: number; equipValue: number }
+export interface ReplayAnalysis {
+  combat: Map<string, CombatStats>
+  duels: Map<string, DuelStats>
+  utility: Map<string, UtilityReportStats>
+  objectives: Map<string, ObjectiveStats>
+  economy: { CT: EconomyReportStats; T: EconomyReportStats }
 }
 
-function pct(numerator: number, denominator: number): number {
-  return denominator > 0 ? numerator / denominator : 0
+const emptyCombat = (): CombatStats => ({ roundsPlayed: 0, roundsWon: 0, kills: 0, assists: 0, deaths: 0, damage: 0, headshotKills: 0 })
+const emptyDuels = (): DuelStats => ({ wins: 0, losses: 0, openingWins: 0, openingLosses: 0, openingConversions: 0 })
+const emptyUtility = (): UtilityReportStats => ({ grenadesThrown: 0, flashesThrown: 0, enemiesBlinded: 0, enemyBlindDuration: 0, killsFromBlinds: 0, flashAssists: 0, utilityDamage: 0, damagingUtilityThrown: 0, utilityKills: 0 })
+const emptyObjectives = (): ObjectiveStats => ({ plants: 0, defuses: 0 })
+const emptyEconomy = (): EconomyReportStats => ({ rounds: 0, wins: 0, losses: 0, startMoney: 0, equipValue: 0 })
+
+function getOrCreate<T>(map: Map<string, T>, id: string, create: () => T): T {
+  let value = map.get(id)
+  if (!value) { value = create(); map.set(id, value) }
+  return value
 }
 
-function safeRatio(numerator: number, denominator: number): number {
-  return denominator > 0 ? numerator / denominator : numerator
-}
-
-function playerSideInRound(replay: Replay, roundIndex: number, steamId: string): Side | null {
-  const round = replay.rounds[roundIndex]
+function isEnemyKill(round: Replay['rounds'][number], kill: KillEvent): boolean {
+  if (!kill.attackerSteamId || kill.attackerSteamId === kill.victimSteamId) return false
   const sides = roundSides(round)
-  return sides.get(steamId) ?? null
+  const attackerSide = sides.get(kill.attackerSteamId)
+  const victimSide = sides.get(kill.victimSteamId)
+  return !!attackerSide && !!victimSide && attackerSide !== victimSide
 }
 
-export function computePlayerReport(replay: Replay, steamId: string): PlayerReport {
-  const player = replay.players.find((p) => p.steamId === steamId)
-  const name = player?.name ?? steamId
-  const flash = computeFlashStats(replay).byPlayer.get(steamId)
-  const utilityDamage = computeDamageStats(replay).byPlayer.get(steamId)
-  const openings = computeOpeningDuels(replay)
-
-  let roundsPlayed = 0
-  let roundsWon = 0
-  let kills = 0
-  let assists = 0
-  let deaths = 0
-  let damage = 0
-  let headshotKills = 0
-  let duelWins = 0
-  let duelLosses = 0
-  let grenadesThrown = 0
-  let flashesThrown = 0
-  let plants = 0
-  let defuses = 0
-
-  replay.rounds.forEach((round, roundIndex) => {
-    if (isKnifeRound(round)) return
-    const side = playerSideInRound(replay, roundIndex, steamId)
-    if (side) {
-      roundsPlayed += 1
-      if (round.winner === side) roundsWon += 1
+function aggregateEconomy(replay: Replay): { CT: EconomyReportStats; T: EconomyReportStats } {
+  const out = { CT: emptyEconomy(), T: emptyEconomy() }
+  for (const round of replay.rounds) {
+    if (isKnifeRound(round)) continue
+    const first = round.frames.find((f) => f.tick >= round.startTick)
+    if (!first) continue
+    for (const side of ['CT', 'T'] as const) {
+      const players = first.players.filter((p) => p.side === side)
+      if (!players.length) continue
+      const stat = out[side]
+      stat.rounds += 1
+      if (round.winner === side) stat.wins += 1
+      else if (round.winner) stat.losses += 1
+      stat.startMoney += players.reduce((sum, p) => sum + p.money, 0)
+      stat.equipValue += players.reduce((sum, p) => sum + p.equipValue, 0)
     }
-    damage += round.damage?.[steamId] ?? 0
+  }
+  return out
+}
+
+export function buildReplayAnalysis(replay: Replay): ReplayAnalysis {
+  const combat = new Map<string, CombatStats>()
+  const duels = new Map<string, DuelStats>()
+  const utility = new Map<string, UtilityReportStats>()
+  const objectives = new Map<string, ObjectiveStats>()
+  for (const player of replay.players) {
+    combat.set(player.steamId, emptyCombat())
+    duels.set(player.steamId, emptyDuels())
+    utility.set(player.steamId, emptyUtility())
+    objectives.set(player.steamId, emptyObjectives())
+  }
+
+  for (const round of replay.rounds) {
+    if (isKnifeRound(round)) continue
+    const sides = roundSides(round)
+    for (const [id, side] of sides) {
+      const stat = getOrCreate(combat, id, emptyCombat)
+      stat.roundsPlayed += 1
+      if (round.winner === side) stat.roundsWon += 1
+      stat.damage += round.damage?.[id] ?? 0
+    }
     for (const path of round.grenadePaths) {
-      if (path.throwerSteamId !== steamId) continue
-      grenadesThrown += 1
-      if (path.kind === 'flash') flashesThrown += 1
+      if (!path.throwerSteamId) continue
+      const stat = getOrCreate(utility, path.throwerSteamId, emptyUtility)
+      stat.grenadesThrown += 1
+      if (path.kind === 'flash') stat.flashesThrown += 1
     }
-    for (const ev of round.events) {
-      if (ev.type === 'kill') {
-        const kill = ev as KillEvent
-        if (kill.attackerSteamId === steamId && kill.victimSteamId !== steamId) {
-          kills += 1
-          duelWins += 1
-          if (kill.headshot) headshotKills += 1
+    for (const event of round.events) {
+      if (event.type === 'kill') {
+        const kill = event as KillEvent
+        const enemyKill = isEnemyKill(round, kill)
+        if (kill.attackerSteamId && enemyKill) {
+          const attacker = getOrCreate(combat, kill.attackerSteamId, emptyCombat)
+          attacker.kills += 1
+          if (kill.headshot) attacker.headshotKills += 1
+          getOrCreate(duels, kill.attackerSteamId, emptyDuels).wins += 1
         }
-        if (kill.assisterSteamId === steamId) assists += 1
-        if (kill.victimSteamId === steamId) {
-          deaths += 1
-          if (kill.attackerSteamId && kill.attackerSteamId !== steamId) duelLosses += 1
-        }
-      } else if (ev.type === 'bomb_planted' && ev.playerSteamId === steamId) {
-        plants += 1
-      } else if (ev.type === 'bomb_defused' && ev.playerSteamId === steamId) {
-        defuses += 1
+        if (kill.assisterSteamId) getOrCreate(combat, kill.assisterSteamId, emptyCombat).assists += 1
+        getOrCreate(combat, kill.victimSteamId, emptyCombat).deaths += 1
+        if (enemyKill) getOrCreate(duels, kill.victimSteamId, emptyDuels).losses += 1
+      } else if (event.type === 'bomb_planted' && event.playerSteamId) {
+        getOrCreate(objectives, event.playerSteamId, emptyObjectives).plants += 1
+      } else if (event.type === 'bomb_defused' && event.playerSteamId) {
+        getOrCreate(objectives, event.playerSteamId, emptyObjectives).defuses += 1
       }
     }
-  })
-
-  let openingWins = 0
-  let openingLosses = 0
-  let openingConversions = 0
-  for (const o of openings) {
-    if (o.winnerSteamId === steamId) {
-      openingWins += 1
-      if (o.roundWinner && o.winnerSide === o.roundWinner) openingConversions += 1
-    }
-    if (o.loserSteamId === steamId) openingLosses += 1
   }
-  const openingAttempts = openingWins + openingLosses
-  const played = Math.max(1, roundsPlayed)
-  const damagingUtilityThrown = utilityDamage?.thrown ?? 0
 
-  return {
-    steamId,
-    name,
-    map: replay.map,
-    roundsPlayed,
-    roundsWon,
-    roundWinRate: pct(roundsWon, roundsPlayed),
-    kills,
-    assists,
-    deaths,
-    kda: safeRatio(kills + assists, deaths),
-    kdr: safeRatio(kills, deaths),
-    damage,
-    adr: damage / played,
-    headshotKills,
-    headshotPct: pct(headshotKills, kills),
-    duelWins,
-    duelLosses,
-    duelWinRate: pct(duelWins, duelWins + duelLosses),
-    openingWins,
-    openingLosses,
-    openingAttempts,
-    openingWinRate: pct(openingWins, openingAttempts),
-    openingConversions,
-    openingConversionRate: pct(openingConversions, openingWins),
-    grenadesThrown,
-    utilityPerRound: grenadesThrown / played,
-    flashesThrown,
-    enemiesBlinded: flash?.enemiesBlinded ?? 0,
-    enemiesBlindedPerRound: (flash?.enemiesBlinded ?? 0) / played,
-    enemyBlindDuration: flash?.enemyBlindDuration ?? 0,
-    blindSecondsPerFlash: pct(flash?.enemyBlindDuration ?? 0, flashesThrown),
-    killsFromBlinds: flash?.killsFromBlinds ?? 0,
-    flashAssists: flash?.flashAssists ?? 0,
-    utilityDamage: utilityDamage?.damage ?? 0,
-    damagingUtilityThrown,
-    utilityDamagePerRound: (utilityDamage?.damage ?? 0) / played,
-    utilityDamagePerThrow: pct(utilityDamage?.damage ?? 0, damagingUtilityThrown),
-    utilityKills: utilityDamage?.kills ?? 0,
-    plants,
-    defuses,
+  for (const [id, stat] of computeFlashStats(replay).byPlayer) {
+    const target = getOrCreate(utility, id, emptyUtility)
+    target.enemiesBlinded = stat.enemiesBlinded
+    target.enemyBlindDuration = stat.enemyBlindDuration
+    target.killsFromBlinds = stat.killsFromBlinds
+    target.flashAssists = stat.flashAssists
   }
+  for (const [id, stat] of computeDamageStats(replay).byPlayer) {
+    const target = getOrCreate(utility, id, emptyUtility)
+    target.utilityDamage = stat.damage
+    target.damagingUtilityThrown = stat.thrown
+    target.utilityKills = stat.kills
+  }
+  for (const opening of computeOpeningDuels(replay)) {
+    getOrCreate(duels, opening.winnerSteamId, emptyDuels).openingWins += 1
+    const winner = getOrCreate(duels, opening.winnerSteamId, emptyDuels)
+    if (opening.roundWinner && opening.roundWinner === opening.winnerSide) winner.openingConversions += 1
+    getOrCreate(duels, opening.loserSteamId, emptyDuels).openingLosses += 1
+  }
+  return { combat, duels, utility, objectives, economy: aggregateEconomy(replay) }
 }
 
-export function reportToExportObject(report: PlayerReport) {
-  return {
-    player: report.name,
-    steamId: report.steamId,
-    map: report.map,
-    roundsPlayed: report.roundsPlayed,
-    roundsWon: report.roundsWon,
-    roundWinRate: report.roundWinRate,
-    kills: report.kills,
-    assists: report.assists,
-    deaths: report.deaths,
-    kda: report.kda,
-    kdr: report.kdr,
-    damage: report.damage,
-    adr: report.adr,
-    headshotKills: report.headshotKills,
-    headshotPct: report.headshotPct,
-    duelWins: report.duelWins,
-    duelLosses: report.duelLosses,
-    duelWinRate: report.duelWinRate,
-    openingWins: report.openingWins,
-    openingLosses: report.openingLosses,
-    openingWinRate: report.openingWinRate,
-    openingConversionRate: report.openingConversionRate,
-    grenadesThrown: report.grenadesThrown,
-    utilityPerRound: report.utilityPerRound,
-    flashesThrown: report.flashesThrown,
-    enemiesBlinded: report.enemiesBlinded,
-    enemiesBlindedPerRound: report.enemiesBlindedPerRound,
-    enemyBlindDuration: report.enemyBlindDuration,
-    blindSecondsPerFlash: report.blindSecondsPerFlash,
-    killsFromBlinds: report.killsFromBlinds,
-    flashAssists: report.flashAssists,
-    utilityDamage: report.utilityDamage,
-    damagingUtilityThrown: report.damagingUtilityThrown,
-    utilityDamagePerRound: report.utilityDamagePerRound,
-    utilityDamagePerThrow: report.utilityDamagePerThrow,
-    utilityKills: report.utilityKills,
-    plants: report.plants,
-    defuses: report.defuses,
-  }
-}
+export function ratio(value: number, denominator: number): number { return denominator > 0 ? value / denominator : 0 }
